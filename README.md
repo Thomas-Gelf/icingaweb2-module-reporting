@@ -31,28 +31,28 @@ end   = "now"
 
 [current_week]
 title = "KW {START_WEEK} (bis jetzt)"
-start = "monday 00:00:00"
+start = "last monday 00:00:00"
 end   = "now"
 
 [last_week]
 title = "KW{START_WEEK}/{START_YEAR}"
-start = "last monday 00:00:00"
+start = "last monday -1week 00:00:00"
 end   = "last sunday 23:59:59"
 
 [minus2_week]
 title = "KW{START_WEEK}/{START_YEAR}"
-start = "last monday -1week 00:00:00"
+start = "last monday -2week 00:00:00"
 end   = "last sunday -1week 23:59:59"
 
 [minus3_week]
 title = "KW{START_WEEK}/{START_YEAR}"
-start = "last monday -2week 00:00:00"
+start = "last monday -3week 00:00:00"
 end   = "last sunday -2week 23:59:59"
 
 [minus4_week]
 title = "KW{START_WEEK}/{START_YEAR}"
-start = "last monday -2week 00:00:00"
-end   = "last sunday -2week 23:59:59"
+start = "last monday -4week 00:00:00"
+end   = "last sunday -3week 23:59:59"
 
 [current_month]
 title = "{START_MONTHNAME} (bis jetzt)"
@@ -86,22 +86,22 @@ end   = "last day of last month -4month 23:59:59"
 
 [current_year]
 title = "{START_YEAR} (Dieses Jahr)"
-start = "first day of this year 00:00:00"
+start = "first day of January this year 00:00:00"
 end   = "now"
 
 [last_year]
 title = "{START_YEAR} (Letztes Jahr)"
-start = "first day of last year 00:00:00"
-end   = "last day of last year 23:59:59"
+start = "first day of January last year 00:00:00"
+end   = "last day of December last year 23:59:59"
 
 [minus2_year]
 title = "{START_YEAR}"
-start = "first day of last year -1year 00:00:00"
-end   = "last day of last year -1year 23:59:59"
+start = "first day of January last year -1year 00:00:00"
+end   = "last day of December last year -1year 23:59:59"
 
 [minus3_year]
 title = "{START_YEAR}"
-start = "first day of last year -2year 00:00:00"
-end   = "last day of last year -2year 23:59:59"
+start = "first day of January last year -2year 00:00:00"
+end   = "last day of December last year -2year 23:59:59"
 ```
 
