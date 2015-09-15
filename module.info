@@ -1,0 +1,5 @@
+Module: reporting
+Version: 0.0.0
+Description: Reporting module
+ Provides some default reports and provides hooks for additional ones
+

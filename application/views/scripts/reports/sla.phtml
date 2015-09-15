@@ -1,0 +1,29 @@
+<table class="sla" data-base-target="_next">
+ <caption><?= $this->translate('Host availability for the chosen hostgroup and timeperiods') ?></caption>
+ <colgroup>
+  <col>
+ </colgroup>
+ <colgroup>
+  <col span="<?= count($timeframes) ?>">
+ </colgroup>
+ <thead>
+  <th><?= $this->translate('Host availability') ?></th>
+<?php foreach ($timeframes as $timeframe): ?>
+  <th title="<?= $this->escape($timeframe->getIntervalDescription()) ?>"><?= $this->escape($timeframe->getTitle()) ?></th>
+<?php endforeach ?>
+ </thead>
+ <tbody>
+<?php foreach ($result as $row): ?>
+  <tr>
+   <th><?= $this->qlink($row->hostname, 'monitoring/show/host', array('host' => $row->hostname)) ?></th>
+<?php foreach ($timeframes as $alias => $timeframe): ?>
+   <td class="<?= ((float) $row->$alias > 99.5) ? 'ok' : 'nok' ?>"><?=
+
+   $this->slaValue($row->$alias, $timeframe, $row->hostname)
+
+?></td>
+<?php endforeach ?>
+  </tr>
+<?php endforeach ?>
+ </tbody>
+</table>

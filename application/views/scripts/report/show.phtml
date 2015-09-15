@@ -1,0 +1,21 @@
+<div class="controls">
+<?= $tabs ?>
+</div>
+
+<div class="content">
+<div class="reportFilter">
+<h1><?= $this->translate('Reporting') ?></h1>
+<?= $reportForm ?>
+</div>
+<div class="reportContent">
+<?php if ($this->report): ?>
+<?= $this->report->render($this) ?>
+<?php else: ?>
+<h1><?= $this->translate('Welcome to the reporting module') ?></h1>
+<span style="float: right; font-size: 20em">
+<?= $this->icon('barchart') ?>
+</span>
+<?= $this->translate('Please choose one of the available reports') ?>
+<?php endif ?>
+</div>
+</div>
