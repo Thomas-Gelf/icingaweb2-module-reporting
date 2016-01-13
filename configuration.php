@@ -1,6 +1,6 @@
 <?php
 
-$section = $this->menuSection(mt('monitoring', 'Reporting'))->add($this->translate('Reports'), array(
+$section = $this->menuSection('Reporting')->add(N_('Reports'), array(
     'url' => 'reporting/report/show',
 ));
 
