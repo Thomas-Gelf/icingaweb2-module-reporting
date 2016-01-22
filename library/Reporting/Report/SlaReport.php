@@ -26,8 +26,8 @@ abstract class SlaReport extends IdoReport
     protected function slaFunction($objectColumn, $timeframe)
     {
         return  sprintf(
-            // "icinga_availability_slatime(%s, '%s', '%s', NULL)",
-            "icinga_availability2(%s, '%s', '%s')",
+            "icinga_availability_slatime(%s, '%s', '%s', NULL)",
+            //"icinga_availability2(%s, '%s', '%s')",
             $objectColumn,
             $timeframe->getStart(Timeframe::HUMAN),
             $timeframe->getEnd(Timeframe::HUMAN)
