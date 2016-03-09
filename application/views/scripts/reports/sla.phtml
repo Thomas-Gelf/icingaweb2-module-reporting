@@ -15,7 +15,7 @@
  <tbody>
 <?php foreach ($result as $row): ?>
   <tr>
-   <th><?= $this->qlink($row->hostname, 'monitoring/show/host', array('host' => $row->hostname)) ?></th>
+   <th><?= $this->qlink($row->hostname, 'monitoring/host/show', array('host' => $row->hostname)) ?></th>
 <?php foreach ($timeframes as $alias => $timeframe): ?>
    <td class="<?= ((float) $row->$alias > 99.5) ? 'ok' : 'nok' ?>"><?=
 
