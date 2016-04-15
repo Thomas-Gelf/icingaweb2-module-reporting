@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Reporting;
 
+use Icinga\Application\Icinga;
 use Icinga\Authentication\Auth;
 use Icinga\Data\Filter\Filter;
 use Icinga\Module\Monitoring\Backend;
@@ -43,6 +44,10 @@ class Ido
 
     protected function applyObjectRestrictions($query)
     {
+        if (Icinga::app()->isCli()) {
+            return $query;
+        }
+
         $restrictions = Filter::matchAny();
         foreach (Auth::getInstance()->getRestrictions('monitoring/filter/objects') as $filter) {
             $restrictions->addFilter(Filter::fromQueryString($filter));
