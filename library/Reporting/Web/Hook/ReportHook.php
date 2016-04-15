@@ -2,10 +2,11 @@
 
 namespace Icinga\Module\Reporting\Web\Hook;
 
+use Icinga\Application\Config;
+use Icinga\Application\Icinga;
 use Icinga\Module\Reporting\MonitoringDb;
 use Icinga\Module\Reporting\Web\Form\QuickForm;
 use Icinga\Module\Reporting\Timeframes;
-use Icinga\Application\Config;
 
 abstract class ReportHook
 {
@@ -82,11 +83,20 @@ abstract class ReportHook
 
     public function render($view)
     {
-        return $view->partial(
-            $this->getViewScript(),
-            $this->getModuleName(),
-            $this->getViewData()
-        );
+        if (Icinga::app()->isCli()) {
+            // CLI workaround
+            return $view->partial(
+                $this->getViewScript(),
+                null,
+                $this->getViewData()
+            );
+        } else {
+            return $view->partial(
+                $this->getViewScript(),
+                $this->getModuleName(),
+                $this->getViewData()
+            );
+        }
     }
 
     protected function enumTimeframes()
