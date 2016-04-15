@@ -1,5 +1,8 @@
 # Reporting
 
+Hint: this is a prototype at a very early stage, expect it to break any
+time without prior announcement
+
 ## Configure your own timeframes
 
 Place this or a similar config in your `<ICINGAWEB_CONFIGDIR>/modules/reporting/timeframes.ini`:
