@@ -71,9 +71,12 @@ abstract class QuickForm extends Zend_Form
     {
         parent::__construct($this->handleOptions($options));
         $this->setMethod('post');
-        $this->setAction(Url::fromRequest());
-        $this->createIdElement();
-        $this->regenerateCsrfToken();
+
+        if (!Icinga::app()->isCli()) {
+            $this->setAction(Url::fromRequest());
+            $this->createIdElement();
+            $this->regenerateCsrfToken();
+        }
     }
 
     protected function handleOptions($options = null)
@@ -273,6 +276,16 @@ abstract class QuickForm extends Zend_Form
         return $this;
     }
 
+    public function handleValues($values = array())
+    {
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $request = new Request();
+        $this->hasBeenSent = true;
+        $request->setPost($values);
+
+        return $this->handleRequest($request);
+    }
+
     public function handleRequest(Request $request = null)
     {
         if ($request !== null) {
@@ -331,6 +344,10 @@ abstract class QuickForm extends Zend_Form
 
     public function redirectOnSuccess($message = null)
     {
+        if (Icinga::app()->isCli()) {
+            return;
+        }
+
         $url = $this->successUrl ?: $this->getAction();
         $this->notifySuccess($this->getSuccessMessage($message));
         $this->redirectAndExit($url);
