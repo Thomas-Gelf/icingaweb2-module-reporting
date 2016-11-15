@@ -1,7 +1,8 @@
 <?php
 
-$this->registerHook(
-    'Reporting\\Report', '\\Icinga\\Module\\Reporting\\Report\\HostslaReport', 'hostsla'
+$this->provideHook(
+    'reporting/Report',
+    '\\Icinga\\Module\\Reporting\\Report\\HostslaReport'
 );
 
 $this->provideHook('monitoring/dataviewExtension');
