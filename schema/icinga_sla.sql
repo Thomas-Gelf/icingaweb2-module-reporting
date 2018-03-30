@@ -21,7 +21,7 @@ CREATE FUNCTION icinga_availability_slatime (
   id BIGINT UNSIGNED,
   start DATETIME,
   end DATETIME,
-  sla_timeperiod_id BIGINT UNSIGNED
+  sla_timeperiod_object_id BIGINT UNSIGNED
 ) RETURNS DECIMAL(7, 4)
   READS SQL DATA
 BEGIN
@@ -38,10 +38,10 @@ BEGIN
   SET @former_id         := @id,
       @tp_lastday        := -1,
       @tp_lastend        := 0,
-      @former_sla_timeperiod_id := @sla_timeperiod_id,
+      @former_sla_timeperiod_object_id := @sla_timeperiod_object_id,
       @former_start      := @start,
       @former_end        := @end,
-      @sla_timeperiod_id := sla_timeperiod_id,
+      @sla_timeperiod_object_id := sla_timeperiod_object_id,
       @id                := id,
       @start             := start,
       @end               := end,
@@ -253,7 +253,7 @@ FROM (
       NULL AS state,
       NULL AS last_state
     FROM icinga_outofsla_periods
-    WHERE timeperiod_object_id = @tp_object_id
+    WHERE timeperiod_object_id = @sla_timeperiod_object_id
       AND start_time >= @start AND start_time <= @end
   -- STOP fetching SLA time period start times ---
 
@@ -264,7 +264,7 @@ FROM (
       NULL AS state,
       NULL AS last_state
     FROM icinga_outofsla_periods
-    WHERE timeperiod_object_id = @tp_object_id
+    WHERE timeperiod_object_id = @sla_timeperiod_object_id
       AND end_time >= @start AND end_time <= @end
   -- STOP fetching SLA time period end times ---
 
@@ -289,7 +289,7 @@ FROM (
   SET @id         := @former_id,
       @start      := @former_start,
       @end        := @former_end,
-      @sla_timeperiod_id := @former_sla_timeperiod_id,
+      @sla_timeperiod_object_id := @former_sla_timeperiod_object_id,
       @last_state   := NULL,
       @last_ts      := NULL,
       @cnt_dt       := NULL,
