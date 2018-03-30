@@ -4,6 +4,7 @@ DROP PROCEDURE IF EXISTS icinga_refresh_outofslaperiods;
 DELIMITER $$
 
 CREATE PROCEDURE icinga_refresh_outofslaperiods()
+  SQL SECURITY INVOKER
 BEGIN
   DECLARE t_start DATETIME;
   DECLARE t_end DATETIME;
