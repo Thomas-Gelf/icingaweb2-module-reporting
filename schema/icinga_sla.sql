@@ -246,149 +246,26 @@ FROM (
   -- STOP adding add all related downtime end times
 
   -- START fetching SLA time period start times ---
-  -- TODO: * reset @tp_*??
-  --       * find better sub table aliases
-  UNION SELECT
-    DATE_ADD(CAST(monthly.date AS DATETIME), INTERVAL finaltps.start_sec SECOND) AS state_time,
-    'sla_start' AS type,
-    NULL AS state,
-    NULL AS last_state
-  FROM (
-    -- there is no generate_series or similar in MySQL
+  UNION ALL
     SELECT
-      DATE_ADD(DATE(@start), INTERVAL @day_offset := @day_offset + 1 DAY) AS date,
-      DAYOFWEEK(DATE_ADD(DATE(@start), INTERVAL @day_offset DAY)) - 1 AS weekday
-    FROM icinga_objects
-    JOIN (SELECT @day_offset := -1) day_offset
-    LIMIT 1461
-  ) monthly JOIN (
-    SELECT
-      NULL AS day,
-      NULL as start_sec,
-      NULL AS end_sec
-    FROM DUAL
-    WHERE (@tp_lastday := NULL) IS NOT NULL
-      AND ((@tp_lastend := 0) + (@day_offset := -1)) = 1
-
-    UNION SELECT
-      cleantps.day,
-      cleantps.start_sec,
-      cleantps.end_sec
-    FROM (
-      SELECT
-        @tp_lastday AS last_day,
-        sortedtps.day AS day,
-        CASE sortedtps.day WHEN @tp_lastday THEN @tp_lastend ELSE (@tp_lastday := sortedtps.day) - sortedtps.day END start_sec,
-        sortedtps.start_sec + (@tp_lastend := sortedtps.end_sec) * 0 AS end_sec
-      FROM (
-        SELECT
-          singletps.day,
-          singletps.start_sec,
-          singletps.end_sec
-        FROM (
-          SELECT
-            @day_offset := CASE
-              WHEN @day_offset < 6 AND @day_offset >= 0 AND @day_offset IS NOT NULL
-              THEN @day_offset + 1
-              ELSE 0
-            END AS day,
-            0 AS start_sec,
-            0 AS end_sec
-          FROM icinga_objects LIMIT 7
-          UNION SELECT
-            @day_offset := CASE
-              WHEN @day_offset < 6 AND @day_offset >= 0 AND @day_offset IS NOT NULL 
-              THEN @day_offset + 1
-              ELSE 0
-            END AS day,
-            86400 AS start_sec,
-            86400 AS end_sec
-          FROM icinga_objects LIMIT 7
-          UNION SELECT
-            day,
-            start_sec AS start_sec,
-            end_sec AS end_sec
-          FROM icinga_timeperiod_timeranges tpr
-          WHERE tpr.timeperiod_id = @sla_timeperiod_id
-        ) singletps
-        ORDER BY singletps.day, singletps.start_sec, singletps.end_sec
-      ) sortedtps
-    ) cleantps
-    WHERE cleantps.end_sec > cleantps.start_sec
-  ) finaltps ON finaltps.day = monthly.weekday
-  WHERE DATE_ADD(CAST(monthly.date AS DATETIME), INTERVAL finaltps.end_sec - 1 SECOND) <= @end
+      start_time AS state_time,
+      'sla_start' AS type,
+      NULL AS state,
+      NULL AS last_state
+    FROM icinga_outofsla_periods
+    WHERE timeperiod_object_id = @tp_object_id
+      AND start_time >= @start AND start_time <= @end
   -- STOP fetching SLA time period start times ---
 
   -- START fetching SLA time period end times ---
-  UNION SELECT
-    DATE_ADD(CAST(monthly.date AS DATETIME), INTERVAL finaltps.end_sec SECOND) AS state_time,
-    'sla_end' AS type,
-    NULL AS state,
-    NULL AS last_state
-  FROM (
-    SELECT
-      DATE_ADD(DATE(@start), INTERVAL @day_offset := @day_offset + 1 DAY) AS date,
-      DAYOFWEEK(DATE_ADD(DATE(@start), INTERVAL @day_offset DAY)) - 1 AS weekday
-    FROM icinga_objects
-    JOIN (SELECT @day_offset := -1) day_offset
-    LIMIT 1461
-  ) monthly JOIN (
-    SELECT
-      NULL AS day,
-      NULL as start_sec,
-      NULL AS end_sec
-    FROM DUAL
-    WHERE (@tp_lastday := NULL) IS NOT NULL
-      AND ((@tp_lastend := 0) + (@day_offset := -1)) = 1
-
-    UNION SELECT
-      cleantps.day,
-      cleantps.start_sec,
-      cleantps.end_sec
-    FROM (
-      SELECT
-        @tp_lastday AS last_day,
-        sortedtps.day AS day,
-        CASE sortedtps.day WHEN @tp_lastday THEN @tp_lastend ELSE (@tp_lastday := sortedtps.day) - sortedtps.day END start_sec,
-        sortedtps.start_sec + (@tp_lastend := sortedtps.end_sec) * 0 AS end_sec
-      FROM (
-        SELECT
-          singletps.day,
-          singletps.start_sec,
-          singletps.end_sec
-        FROM (
-          SELECT
-            @day_offset := CASE
-              WHEN @day_offset < 6 AND @day_offset >= 0 AND @day_offset IS NOT NULL
-              THEN @day_offset + 1
-              ELSE 0
-            END AS day,
-            0 AS start_sec,
-            0 AS end_sec
-          FROM icinga_objects LIMIT 7
-          UNION SELECT
-            @day_offset := CASE
-              WHEN @day_offset < 6 AND @day_offset >= 0 AND @day_offset IS NOT NULL
-              THEN @day_offset + 1
-              ELSE 0
-            END AS day,
-            86400 AS start_sec,
-            86400 AS end_sec
-          FROM icinga_objects LIMIT 7
-          UNION SELECT
-            day,
-            start_sec AS start_sec,
-            end_sec AS end_sec
-          FROM icinga_timeperiod_timeranges tpr
-          WHERE tpr.timeperiod_id = @sla_timeperiod_id
-        ) singletps
-        ORDER BY singletps.day, singletps.start_sec, singletps.end_sec
-      ) sortedtps
-    ) cleantps
-    WHERE end_sec > start_sec
-  ) finaltps ON finaltps.day = monthly.weekday
-  WHERE DATE_ADD(CAST(monthly.date AS DATETIME), INTERVAL finaltps.end_sec SECOND) <= @end
-
+  UNION ALL SELECT
+      end_time AS state_time,
+      'sla_start' AS type,
+      NULL AS state,
+      NULL AS last_state
+    FROM icinga_outofsla_periods
+    WHERE timeperiod_object_id = @tp_object_id
+      AND end_time >= @start AND end_time <= @end
   -- STOP fetching SLA time period end times ---
 
 ) events
