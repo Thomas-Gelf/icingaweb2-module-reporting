@@ -88,28 +88,34 @@ BEGIN
               singletps.end_sec
             FROM (
               -- fake start on every day
-              SELECT
-                @day_offset := CASE
-                  WHEN @day_offset < 6 AND @day_offset >= 0 AND @day_offset IS NOT NULL
-                  THEN @day_offset + 1
-                  ELSE 0
-                END AS day,
-                0 AS start_sec,
-                0 AS end_sec
-              -- Fake generate_series:
-              FROM icinga_objects LIMIT 7
+              SELECT * FROM (
+                SELECT
+                  @day_offset := CASE
+                                 WHEN @day_offset < 6 AND @day_offset >= 0 AND @day_offset IS NOT NULL
+                                   THEN @day_offset + 1
+                                 ELSE 0
+                                 END AS day,
+                  0                  AS start_sec,
+                  0                  AS end_sec
+                -- Fake generate_series:
+                FROM icinga_objects
+                LIMIT 7
+              ) fake_start
             UNION
-              -- Fake end for every day
-              SELECT
-                @day_offset := CASE
-                  WHEN @day_offset < 6 AND @day_offset >= 0 AND @day_offset IS NOT NULL
-                  THEN @day_offset + 1
-                  ELSE 0
-                END AS day,
-                86400 AS start_sec,
-                86400 AS end_sec
-              -- Fake generate_series:
-              FROM icinga_objects LIMIT 7
+              SELECT * FROM (
+                -- Fake end for every day
+                SELECT
+                  @day_offset := CASE
+                                 WHEN @day_offset < 6 AND @day_offset >= 0 AND @day_offset IS NOT NULL
+                                   THEN @day_offset + 1
+                                 ELSE 0
+                                 END AS day,
+                  86400              AS start_sec,
+                  86400              AS end_sec
+                -- Fake generate_series:
+                FROM icinga_objects
+                LIMIT 7
+              ) fake_end
             UNION
               -- configured time ranges
               SELECT
