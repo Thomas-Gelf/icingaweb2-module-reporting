@@ -187,7 +187,7 @@ FROM (
   -- END ADDING a fake end
 
   -- START fetching current host state as an event
-  -- TODO: This is not 100% correct. state should be find, last_state sometimes isn't.
+  -- TODO: This is not 100% correct. state should be fine, last_state sometimes isn't.
   UNION SELECT 
     GREATEST(
       @start,
@@ -260,7 +260,7 @@ FROM (
   -- START fetching SLA time period end times ---
   UNION ALL SELECT
       end_time AS state_time,
-      'sla_start' AS type,
+      'sla_end' AS type,
       NULL AS state,
       NULL AS last_state
     FROM icinga_outofsla_periods

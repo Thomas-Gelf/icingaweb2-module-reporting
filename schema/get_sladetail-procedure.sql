@@ -10,6 +10,8 @@ CREATE PROCEDURE icinga_get_sladetail(
   IN tp_object_id BIGINT UNSIGNED
 )
 
+READS SQL DATA
+
 BEGIN
 
   SET
