@@ -11,10 +11,10 @@ class Zend_View_Helper_SlaValue extends Zend_View_Helper_Abstract
         $params = $url->getParams();
         if ($service === null) {
             $params->unshift('object_type', 'host');
-            $params->unshift('host', $host);
+            $params->unshift('host_name', $host);
         } else {
-            $params->unshift('service', $service);
-            $params->unshift('host', $host);
+            $params->unshift('service_name', $service);
+            $params->unshift('host_name', $host);
         }
 
         $params->add('limit', 100);
