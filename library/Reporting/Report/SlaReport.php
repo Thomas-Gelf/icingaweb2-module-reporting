@@ -2,6 +2,8 @@
 
 namespace Icinga\Module\Reporting\Report;
 
+use Icinga\Data\DataArray\ArrayDatasource;
+use Icinga\Module\Reporting\File\Csv;
 use Icinga\Module\Reporting\Timeframe;
 
 abstract class SlaReport extends IdoReport
@@ -21,6 +23,33 @@ abstract class SlaReport extends IdoReport
             'result'     => $this->getResult(),
             'timeframes' => $this->getSelectedTimeframes()
         );
+    }
+
+    public function getCsv()
+    {
+        $filename = sprintf(
+            '%s %s.csv',
+            $this->getName(),
+            date('(d.m.Y)')
+        );
+
+        $headers = array('');
+        foreach ($this->getSelectedTimeframes() as $timeFrame) {
+            $headers[] = $timeFrame->getTitle();
+        }
+        $rows = array($headers);
+        foreach ($this->getResult() as $row) {
+            $props = (array) $row;
+            foreach ($props as $key => & $value) {
+                if ($key === 'hostname') {
+                    continue;
+                }
+
+                $value = (float) $value;
+            }
+            $rows[] = array_values((array) $props);
+        }
+        return Csv::create($rows)->setFilename($filename);
     }
 
     protected function slaFunction($objectColumn, $timeframe)

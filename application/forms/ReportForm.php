@@ -7,6 +7,7 @@ use Icinga\Module\Reporting\MonitoringDb;
 use Icinga\Module\Reporting\Report\Report;
 use Icinga\Module\Reporting\Web\Form\QuickForm;
 use Icinga\Web\Hook;
+use Icinga\Web\Url;
 
 class ReportForm extends QuickForm
 {
@@ -51,6 +52,31 @@ class ReportForm extends QuickForm
         $this->setSubmitLabel($this->translate('Generate'));
     }
 
+    public function getDownloadUrl()
+    {
+        $values = $this->getValues();
+        if (array_key_exists('report', $values)) {
+            $values['report'] = $this->getReportNameForClass($values['report']);
+        }
+
+        if (array_key_exists('timeframes', $values)) {
+            $timeframes = $values['timeframes'];
+            unset($values['timeframes']);
+        } else {
+            $timeframes = null;
+        }
+
+        $url = Url::fromPath($this->getAction(), $values);
+
+        if ($timeframes) {
+            $url->getParams()
+                ->addValues('timeframes', $timeframes)
+                ->add('download');
+        }
+
+        return $url;
+    }
+
     public function getReport()
     {
         return $this->report;
@@ -59,6 +85,19 @@ class ReportForm extends QuickForm
     public function onSuccess()
     {
         // No redirect
+    }
+
+    protected function getReportNameForClass($classname)
+    {
+        $enum = $this->enumReports();
+        return $enum[$classname];
+    }
+
+    public function loadReportByName($name)
+    {
+        $enum = $this->enumReports();
+        $enum = array_flip($enum);
+        return new $enum[$name];
     }
 
     protected function enumReports()

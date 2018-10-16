@@ -27,6 +27,11 @@ abstract class ReportHook
         return $class;
     }
 
+    public function providesCsv()
+    {
+        return method_exists($this, 'getCsv');
+    }
+
     public function getValue($key, $default = null)
     {
         if (array_key_exists($key, $this->values)) {
@@ -83,18 +88,20 @@ abstract class ReportHook
 
     public function render($view)
     {
+        $data = $this->getViewData();
+        $data['form'] = $view->reportForm;
         if (Icinga::app()->isCli()) {
             // CLI workaround
             return $view->partial(
                 $this->getViewScript(),
                 null,
-                $this->getViewData()
+                $data
             );
         } else {
             return $view->partial(
                 $this->getViewScript(),
                 $this->getModuleName(),
-                $this->getViewData()
+                $data
             );
         }
     }

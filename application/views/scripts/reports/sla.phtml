@@ -1,3 +1,15 @@
+<span class="actions">
+<?= $this->qlink(
+  'Download',
+  $form->getDownloadUrl(),
+  null,
+  array(
+    'icon'   => 'download',
+    'target' => '_blank'
+  )
+) ?>
+</span>
+
 <table class="sla" data-base-target="_next">
  <caption><?= $this->translate('Host availability for the chosen hostgroup and timeperiods') ?></caption>
  <colgroup>
@@ -15,7 +27,7 @@
  <tbody>
 <?php foreach ($result as $row): ?>
   <tr>
-   <th><?= $this->qlink($row->hostname, 'monitoring/host/show', array('host' => $row->hostname)) ?></th>
+   <th><?= $this->qlink($row->hostname, 'monitoring/host/show', array('host_name' => $row->hostname)) ?></th>
 <?php foreach ($timeframes as $alias => $timeframe): ?>
    <td class="<?= ((float) $row->$alias > 99.5) ? 'ok' : 'nok' ?>"><?=
 
