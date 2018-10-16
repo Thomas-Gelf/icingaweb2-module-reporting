@@ -16,7 +16,7 @@ class Ido
     public function db()
     {
         if ($this->db === null) {
-            $this->db = $this->monitoring->getResource()->getDbAdapter();
+            $this->db = $this->monitoring()->getResource()->getDbAdapter();
         }
         return $this->db;
     }
