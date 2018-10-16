@@ -24,11 +24,12 @@ class HostslaReport extends SlaReport
 
     public function getResult()
     {
-        return $this->fetchHostSlasForHostgroup($this->getValue('hostgroup'));
+        return $this->ido()->db()->fetchAll($this->getQuery());
     }
 
-    protected function fetchHostSlasForHostgroup($hostgroup)
+    public function getQuery()
     {
+        $hostgroup = $this->getValue('hostgroup');
         $db = $this->ido()->db();
 
         $query = $db->select()->from(
@@ -56,6 +57,6 @@ class HostslaReport extends SlaReport
 
         $query->order('hostname', 'ASC');
 
-        return $db->fetchAll($query);
+        return $query;
     }
 }
