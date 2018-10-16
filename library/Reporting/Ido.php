@@ -13,6 +13,9 @@ class Ido
 
     private $db;
 
+    /**
+     * @return \Zend_Db_Adapter_Pdo_Abstract
+     */
     public function db()
     {
         if ($this->db === null) {
@@ -28,6 +31,17 @@ class Ido
             ->order('hostgroup_alias');
 
         $this->applyObjectRestrictions($query); 
+
+        return array(null => '- please choose -') + $query->getQuery()->fetchPairs();
+    }
+
+    public function enumServicegroups(Filter $filter = null)
+    {
+        $query = $this->monitoring()->select()
+            ->from('servicegroup', array('servicegroup_name', 'servicegroup_alias'))
+            ->order('servicegroup_alias');
+
+        $this->applyObjectRestrictions($query);
 
         return array(null => '- please choose -') + $query->getQuery()->fetchPairs();
     }

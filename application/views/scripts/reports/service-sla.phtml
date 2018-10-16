@@ -1,0 +1,49 @@
+<span class="actions">
+<?= $this->qlink(
+  'Download',
+  $form->getDownloadUrl(),
+  null,
+  array(
+    'icon'   => 'download',
+    'target' => '_blank'
+  )
+) ?>
+</span>
+
+<table class="sla" data-base-target="_next">
+ <caption><?= $this->translate('Service availability for the chosen timeperiods') ?></caption>
+ <colgroup>
+  <col>
+ </colgroup>
+ <colgroup>
+  <col span="<?= count($timeframes) ?>">
+ </colgroup>
+ <thead>
+  <th><?= $this->translate('Service availability') ?></th>
+<?php foreach ($timeframes as $timeframe): ?>
+  <th title="<?= $this->escape($timeframe->getIntervalDescription()) ?>"><?= $this->escape($timeframe->getTitle()) ?></th>
+<?php endforeach ?>
+ </thead>
+ <tbody>
+<?php foreach ($result as $row): ?>
+  <tr>
+   <th>
+    <?= $this->qlink($row->hostname, 'monitoring/host/show', [
+       'host' => $row->hostname]
+    ) ?>:
+    <?= $this->qlink($row->servicename, 'monitoring/service/show', [
+       'host' => $row->hostname,
+       'service' => $row->servicename
+    ]) ?>
+   </th>
+<?php foreach ($timeframes as $alias => $timeframe): ?>
+   <td class="<?= ((float) $row->$alias > 99.5) ? 'ok' : 'nok' ?>"><?=
+
+   $this->slaValue($row->$alias, $timeframe, $row->hostname, $row->servicename)
+
+?></td>
+<?php endforeach ?>
+  </tr>
+<?php endforeach ?>
+ </tbody>
+</table>

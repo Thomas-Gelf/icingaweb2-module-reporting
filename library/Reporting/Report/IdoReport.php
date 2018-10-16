@@ -9,6 +9,9 @@ abstract class IdoReport extends ReportHook
 {
     private $ido;
 
+    /**
+     * @return Ido
+     */
     protected function ido()
     {
         if ($this->ido === null) {
