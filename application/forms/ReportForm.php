@@ -22,25 +22,33 @@ class ReportForm extends QuickForm
             'class'        => 'autosubmit',
         ));
 
+        $this->setSubmitLabel($this->translate('Next'));
         
         if (! $this->hasBeenSent()) {
             return;
         }
         $post = $this->getRequest()->getPost();
 
-        if ($this->isValidPartial($post)) {
-            $class = $this->getValue('report');
-            $report = new $class;
-            $report->addFormElements($this);
-            if ($this->isValidPartial($this->getRequest()->getPost())) {
-                foreach ($this->getElements() as $el) {
-                    if ($el->isRequired() && ! isset($post[$el->getName()])) {
-                        return;
-                    }
-                }
-                $this->report = $report->setValues($this->getValues());
-            }
+        if (! $this->isValidPartial($post)) {
+            return;
         }
+        $class = $this->getValue('report');
+        if (! $class) {
+            return;
+        }
+
+        $report = new $class;
+        $report->addFormElements($this);
+        if ($this->isValidPartial($this->getRequest()->getPost())) {
+            foreach ($this->getElements() as $el) {
+                if ($el->isRequired() && ! isset($post[$el->getName()])) {
+                    return;
+                }
+            }
+            $this->report = $report->setValues($this->getValues());
+        }
+
+        $this->setSubmitLabel($this->translate('Generate'));
     }
 
     public function getReport()
