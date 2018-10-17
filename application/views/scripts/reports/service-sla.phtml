@@ -29,8 +29,8 @@
   <tr>
    <th>
     <?= $this->qlink($row->hostname, 'monitoring/host/show', [
-       'host' => $row->hostname]
-    ) ?>:
+       'host' => $row->hostname
+    ]) ?>:
     <?= $this->qlink($row->servicename, 'monitoring/service/show', [
        'host' => $row->hostname,
        'service' => $row->servicename
