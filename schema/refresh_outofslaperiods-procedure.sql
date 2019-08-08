@@ -9,6 +9,7 @@ BEGIN
   DECLARE t_start DATETIME;
   DECLARE t_end DATETIME;
   DECLARE tp_id, tpo_id BIGINT UNSIGNED;
+  DECLARE ts_offset INT;
   DECLARE fake_result INT UNSIGNED;
 
   DECLARE done INT DEFAULT FALSE;
@@ -30,9 +31,19 @@ BEGIN
   TRUNCATE TABLE icinga_outofsla_periods;
 
   SELECT
-      CAST(DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 5 YEAR), '%Y-01-01 00:00:00') AS DATETIME),
-      CAST(DATE_FORMAT(NOW(), '%Y-12-31 23:59:59') AS DATETIME)
-    INTO t_start, t_end;
+    CAST(DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 4 YEAR), '%Y-01-01 00:00:00') AS DATETIME),
+    CAST(DATE_FORMAT(DATE_ADD(NOW(), INTERVAL 1 YEAR), '%Y-12-31 23:59:59') AS DATETIME),
+    -- Icinga 2 writes seconds with timestamp offset into columns not aware of timezones
+    -- This is an attempt to fix those values:
+    CASE WHEN COALESCE(
+        (SELECT CASE WHEN program_version LIKE 'v2%' THEN 1 ELSE 0 END
+           FROM icinga_programstatus
+           WHERE is_currently_running = 1
+           ORDER BY status_update_time DESC
+        ),
+        1
+     ) = 1 THEN TIMESTAMPDIFF(SECOND, UTC_TIMESTAMP(), NOW()) ELSE 0 END
+  INTO t_start, t_end, ts_offset;
 
   OPEN cursor_tp;
 
@@ -120,8 +131,8 @@ BEGIN
               -- configured time ranges
               SELECT
                 day,
-                start_sec AS start_sec,
-                end_sec AS end_sec
+                (start_sec + ts_offset) % 86400 AS start_sec,
+                CASE WHEN (end_sec + ts_offset) = 86400 THEN 86400 ELSE (end_sec + ts_offset) % 86400 END AS end_sec
               FROM icinga_timeperiod_timeranges tpr
 
               JOIN icinga_timeperiods tp ON tp.timeperiod_id = tpr.timeperiod_id
