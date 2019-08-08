@@ -76,6 +76,10 @@ abstract class ReportHook
         ));
     }
 
+    /**
+     * @param $values
+     * @return $this
+     */
     public function setValues($values)
     {
         $this->values = $values;
@@ -111,6 +115,9 @@ abstract class ReportHook
         return $this->configuredTimeframes()->enumTimeframes();
     }
 
+    /**
+     * @return Timeframes
+     */
     protected function configuredTimeframes()
     {
         return Timeframes::fromConfig(

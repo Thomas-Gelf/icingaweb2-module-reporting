@@ -25,6 +25,8 @@ abstract class SlaReport extends IdoReport
         );
     }
 
+    abstract protected function getMainCsvHeaders();
+
     public function getCsv()
     {
         $filename = sprintf(
@@ -33,7 +35,7 @@ abstract class SlaReport extends IdoReport
             date('(d.m.Y)')
         );
 
-        $headers = array('');
+        $headers = $this->getMainCsvHeaders();
         foreach ($this->getSelectedTimeframes() as $timeFrame) {
             $headers[] = $timeFrame->getTitle();
         }
@@ -41,7 +43,7 @@ abstract class SlaReport extends IdoReport
         foreach ($this->getResult() as $row) {
             $props = (array) $row;
             foreach ($props as $key => & $value) {
-                if ($key === 'hostname') {
+                if ($key === 'hostname' || $key === 'servicename') {
                     continue;
                 }
 

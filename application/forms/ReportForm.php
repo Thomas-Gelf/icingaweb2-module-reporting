@@ -93,6 +93,10 @@ class ReportForm extends QuickForm
         return $enum[$classname];
     }
 
+    /**
+     * @param $name
+     * @return \Icinga\Module\Reporting\Web\Hook\ReportHook
+     */
     public function loadReportByName($name)
     {
         $enum = $this->enumReports();

@@ -116,4 +116,9 @@ class ServiceslaReport extends SlaReport
 
         return $query;
     }
+
+    protected function getMainCsvHeaders()
+    {
+        return ['Host', 'Service'];
+    }
 }

@@ -55,8 +55,13 @@ class HostslaReport extends SlaReport
         $query->where('hgo.name1 = ?', $hostgroup)
               ->where('ho.is_active = 1');
 
-        $query->order('hostname', 'ASC');
+        $query->order('hostname');
 
         return $query;
+    }
+
+    protected function getMainCsvHeaders()
+    {
+        return ['Host'];
     }
 }
