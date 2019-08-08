@@ -21,6 +21,7 @@ class Ido
         if ($this->db === null) {
             $this->db = $this->monitoring()->getResource()->getDbAdapter();
         }
+
         return $this->db;
     }
 
@@ -30,7 +31,7 @@ class Ido
             ->from('hostgroup', array('hostgroup_name', 'hostgroup_alias'))
             ->order('hostgroup_alias');
 
-        $this->applyObjectRestrictions($query); 
+        $this->applyObjectRestrictions($query);
 
         return array(null => '- please choose -') + $query->getQuery()->fetchPairs();
     }
@@ -53,6 +54,7 @@ class Ido
             ->where('hostgroup', $hostgroup)
             ->order('service_display_name');
         $this->applyObjectRestrictions($query);
+
         return array('_HOST_' => 'Host Check') + $query->getQuery()->distinct()->fetchPairs();
     }
 
