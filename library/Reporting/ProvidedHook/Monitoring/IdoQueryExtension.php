@@ -45,7 +45,7 @@ class IdoQueryExtension extends IdoQueryExtensionHook
             array('tp_name' => "CONCAT('sla', cv.varvalue) COLLATE latin1_general_cs")
         )->join(
             array('o' => $prefix . 'objects'),
-            "o.object_id = cv.object_id AND o.is_active = 1 AND o.objecttype_id = 1 AND varname = 'SLA_ID'",
+            "o.object_id = cv.object_id AND o.is_active = 1 AND o.objecttype_id = 1 AND LOWER(varname) = 'sla_id'",
             array()
         )->group('cv.varvalue');
 
@@ -69,7 +69,7 @@ class IdoQueryExtension extends IdoQueryExtensionHook
 
         $query->joinLeft(
             array('sla_cv' => $prefix . 'customvariablestatus'),
-            "sla_cv.object_id = $joinOn AND sla_cv.varname = 'SLA_ID'",
+            "sla_cv.object_id = $joinOn AND LOWER(sla_cv.varname) = 'sla_id'",
             array()
         )->joinLeft(
             array( 'hostsla' => $hostsla ),
